@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 36 39% 97%;
+    --foreground: 30 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 25% 15%;
+
+    --primary: 30 25% 15%;
+    --primary-foreground: 36 39% 97%;
+
+    --secondary: 35 20% 88%;
+    --secondary-foreground: 30 25% 15%;
+
+    --muted: 35 15% 92%;
+    --muted-foreground: 30 10% 45%;
+
+    --accent: 38 60% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 12% 88%;
+    --input: 35 12% 88%;
+    --ring: 30 25% 15%;
+
+    --radius: 0.25rem;
+
+    /* Premium gold accent */
+    --gold: 43 74% 49%;
+    --gold-light: 45 86% 62%;
+    
+    /* Hero overlay */
+    --hero-overlay: linear-gradient(to right, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+    
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 30 25% 15%;
+    --foreground: 36 39% 97%;
+
+    --card: 30 20% 18%;
+    --card-foreground: 36 39% 97%;
+
+    --popover: 30 20% 18%;
+    --popover-foreground: 36 39% 97%;
+
+    --primary: 36 39% 97%;
+    --primary-foreground: 30 25% 15%;
+
+    --secondary: 30 15% 25%;
+    --secondary-foreground: 36 39% 97%;
+
+    --muted: 30 15% 25%;
+    --muted-foreground: 35 10% 65%;
+
+    --accent: 38 60% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 36 39% 97%;
+
+    --border: 30 15% 25%;
+    --input: 30 15% 25%;
+    --ring: 36 39% 97%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  /* Shimmer effect for loading */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--background)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Smooth image loading */
+  .image-loading {
+    background: linear-gradient(
+      110deg,
+      hsl(var(--muted)) 8%,
+      hsl(var(--muted) / 0.5) 18%,
+      hsl(var(--muted)) 33%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+  }
+}
