@@ -36,7 +36,7 @@ cd tomo-batik
 npm install
 
 # Buat file environment
-echo "VITE_API_URL=http://localhost:3001/api" > .env.production
+echo "VITE_API_URL=http://localhost:8181/api" > .env.production
 # Atau jika backend di server berbeda:
 # echo "VITE_API_URL=https://api.yourdomain.com/api" > .env.production
 
@@ -122,7 +122,7 @@ sudo tail -f /var/log/nginx/error.log
 
 **Backend tidak bekerja?**
 - Cek: `pm2 status`
-- Cek: `curl http://localhost:3001/api/health`
+- Cek: `curl http://localhost:8181/api/health`
 - Cek log: `pm2 logs tomo-batik-api`
 
 **Permission denied?**

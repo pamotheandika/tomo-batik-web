@@ -21,7 +21,7 @@ const categoriesRouter = require('./routes/categories');
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8181;
 
 // Middleware
 app.use(helmet()); // Security headers

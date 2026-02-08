@@ -2,7 +2,7 @@
 
 This document defines the API contract that the backend must implement to integrate with the frontend catalog.
 
-**Base URL:** `http://localhost:3001/api` (development)  
+**Base URL:** `http://localhost:8181/api` (development)  
 **Content-Type:** `application/json`
 
 ---

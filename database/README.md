@@ -89,7 +89,7 @@ DB_PORT=5432
 DB_NAME=tomo_batik
 DB_USER=postgres
 DB_PASSWORD=your_password
-PORT=3001
+PORT=8181
 FRONTEND_URL=http://localhost:5173
 EOF
 

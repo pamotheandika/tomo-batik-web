@@ -101,7 +101,7 @@ VITE_API_URL=https://api.yourdomain.com/api
 Atau jika backend di server yang sama:
 
 ```env
-VITE_API_URL=http://localhost:3001/api
+VITE_API_URL=http://localhost:8181/api
 ```
 
 ### 3.4 Build Project
@@ -215,7 +215,7 @@ nano .env
 Tambahkan konfigurasi:
 
 ```env
-PORT=3001
+PORT=8181
 NODE_ENV=production
 FRONTEND_URL=https://yourdomain.com
 # Database configuration
@@ -278,7 +278,7 @@ server {
 
     # Proxy API requests to backend
     location /api {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:8181;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -361,7 +361,7 @@ pm2 status
 ### Test Koneksi Backend
 
 ```bash
-curl http://localhost:3001/api/health
+curl http://localhost:8181/api/health
 ```
 
 ## Keamanan Tambahan

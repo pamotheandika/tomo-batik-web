@@ -42,7 +42,7 @@ npm install
 # Check if .env.production exists
 if [ ! -f .env.production ]; then
     echo -e "${YELLOW}Creating .env.production file...${NC}"
-    echo "VITE_API_URL=http://localhost:3001/api" > .env.production
+    echo "VITE_API_URL=http://localhost:8181/api" > .env.production
     echo -e "${YELLOW}⚠️  Please edit .env.production with your API URL before building!${NC}"
     read -p "Press Enter to continue after editing .env.production..."
 fi
