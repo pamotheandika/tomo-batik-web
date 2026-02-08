@@ -7,8 +7,11 @@ import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import WhatsAppChat from "@/components/WhatsAppChat";
 import OrderNotification from "@/components/OrderNotification";
+import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
+import BatikTulis from "./pages/BatikTulis";
+import ReadyToWear from "./pages/ReadyToWear";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
@@ -30,7 +33,10 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/index" element={<Index />} />
+              <Route path="/batik-tulis" element={<BatikTulis />} />
+              <Route path="/ready-to-wear" element={<ReadyToWear />} />
               <Route path="/about" element={<About />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/cart" element={<Cart />} />

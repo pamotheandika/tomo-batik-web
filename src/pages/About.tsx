@@ -78,7 +78,7 @@ const About = () => {
                 
                 <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
                   <p>
-                    Berdiri dari tahun 2024, <span className="text-foreground font-semibold">Batik Tomo</span> bekerja sama dengan para pengrajin lokal untuk mempertahankan warisan dan budaya Indonesia, mulai dari batik tulis hingga batik cap, menjadi karya yang sesuai dengan gaya modern.
+                    Berdiri dari tahun 2024, <span className="text-foreground font-semibold">Batik Tomo</span> bekerja sama dengan para pengrajin lokal untuk mempertahankan warisan dan budaya Indonesia, mulai dari batik tulis hingga ready to wear, menjadi karya yang sesuai dengan gaya modern.
                   </p>
                   <p>
                     Dengan menggabungkan tradisi dan sentuhan modern, Batik Tomo berupaya menghadirkan pengalaman mengenakan batik yang lebih <span className="text-foreground font-semibold">personal</span>, <span className="text-foreground font-semibold">berkualitas</span>, dan <span className="text-foreground font-semibold">berkelas</span>.

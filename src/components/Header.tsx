@@ -57,49 +57,113 @@ const Header = () => {
                 </div>
               )}
 
-              <nav className="flex flex-col gap-4 mt-8">
-                <Link to="/" className="text-sm font-medium hover:text-accent transition-colors">
-                  Beranda
-                </Link>
-                <Link to="/catalog" className="text-sm font-medium hover:text-accent transition-colors">
-                  Catalog
-                </Link>
-                <Link to="/about" className="text-sm font-medium hover:text-accent transition-colors">
-                  About
-                </Link>
+              <nav className="flex flex-col mt-8">
+                {/* Main Navigation Section */}
+                <div className="space-y-1 mb-6">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3 px-1">
+                    Navigation
+                  </p>
+                  <Link 
+                    to="/" 
+                    className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                  >
+                    <div className="w-1 h-6 bg-accent/0 group-hover:bg-accent rounded-full transition-all duration-200" />
+                    <span>Beranda</span>
+                  </Link>
+                  <Link 
+                    to="/catalog" 
+                    className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                  >
+                    <div className="w-1 h-6 bg-accent/0 group-hover:bg-accent rounded-full transition-all duration-200" />
+                    <span>Catalog</span>
+                  </Link>
+                  <Link 
+                    to="/about" 
+                    className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                  >
+                    <div className="w-1 h-6 bg-accent/0 group-hover:bg-accent rounded-full transition-all duration-200" />
+                    <span>About</span>
+                  </Link>
+                </div>
 
+                {/* User Section */}
                 {user ? (
                   <>
-                    <div className="h-px bg-border my-2" />
-                    <Link to="/order" className="text-sm font-medium hover:text-accent transition-colors flex items-center gap-2">
-                      <Package className="h-4 w-4" />
-                      My Orders
-                    </Link>
-                    <a href="#" className="text-sm font-medium hover:text-accent transition-colors flex items-center gap-2">
-                      <Heart className="h-4 w-4" />
-                      Wishlist
-                    </a>
-                    <a href="#" className="text-sm font-medium hover:text-accent transition-colors flex items-center gap-2">
-                      <Settings className="h-4 w-4" />
-                      Settings
-                    </a>
-                    <button
-                      onClick={logout}
-                      className="text-sm font-medium text-destructive hover:text-destructive/80 transition-colors flex items-center gap-2 text-left"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Logout
-                    </button>
+                    {/* Premium Divider */}
+                    <div className="relative my-6">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center">
+                        <span className="bg-background px-3 text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                          Account
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Link 
+                        to="/order" 
+                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                      >
+                        <div className="p-2 rounded-lg bg-muted/50 group-hover:bg-accent/10 transition-colors">
+                          <Package className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                        </div>
+                        <span>My Orders</span>
+                      </Link>
+                      <a 
+                        href="#" 
+                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                      >
+                        <div className="p-2 rounded-lg bg-muted/50 group-hover:bg-accent/10 transition-colors">
+                          <Heart className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                        </div>
+                        <span>Wishlist</span>
+                      </a>
+                      <a 
+                        href="#" 
+                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:text-accent hover:bg-accent/5 transition-all duration-200 border border-transparent hover:border-accent/10"
+                      >
+                        <div className="p-2 rounded-lg bg-muted/50 group-hover:bg-accent/10 transition-colors">
+                          <Settings className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                        </div>
+                        <span>Settings</span>
+                      </a>
+                      
+                      {/* Logout Separator */}
+                      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
+                      
+                      <button
+                        onClick={logout}
+                        className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-destructive hover:text-destructive hover:bg-destructive/5 transition-all duration-200 border border-transparent hover:border-destructive/10"
+                      >
+                        <div className="p-2 rounded-lg bg-destructive/10 group-hover:bg-destructive/20 transition-colors">
+                          <LogOut className="h-4 w-4 text-destructive" />
+                        </div>
+                        <span>Logout</span>
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <>
-                    <div className="h-px bg-border my-2" />
+                    {/* Premium Divider */}
+                    <div className="relative my-6">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center">
+                        <span className="bg-background px-3 text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                          Account
+                        </span>
+                      </div>
+                    </div>
+
                     <Link
                       to="/register"
-                      className="text-sm font-medium text-accent hover:text-accent/80 transition-colors flex items-center gap-2"
+                      className="group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent transition-all duration-200 shadow-lg shadow-accent/20 hover:shadow-accent/30 hover:scale-[1.02]"
                     >
                       <User className="h-4 w-4" />
-                      Sign Up / Sign In
+                      <span>Sign Up / Sign In</span>
                     </Link>
                   </>
                 )}

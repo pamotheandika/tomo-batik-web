@@ -51,19 +51,14 @@ import { transformImageUrl } from "@/types/product";
 // Categories and subcategories (should match your backend)
 const categories = [
   { id: "batik-tulis", name: "Batik Tulis" },
-  { id: "batik-cap", name: "Batik Cap" },
   { id: "ready-to-wear", name: "Ready to Wear" },
 ];
 
 const subcategories = [
   { id: "katun", name: "Katun", categoryId: "batik-tulis" },
   { id: "sutra", name: "Sutra", categoryId: "batik-tulis" },
-  { id: "dobby", name: "Dobby", categoryId: "batik-tulis" },
-  { id: "katun", name: "Katun", categoryId: "batik-cap" },
-  { id: "rayon", name: "Rayon", categoryId: "batik-cap" },
-  { id: "kemeja", name: "Kemeja", categoryId: "ready-to-wear" },
-  { id: "dress", name: "Dress", categoryId: "ready-to-wear" },
-  { id: "outer", name: "Outer", categoryId: "ready-to-wear" },
+  { id: "batik-tulis-sutra", name: "Batik Tulis/Sutra", categoryId: "ready-to-wear" },
+  { id: "batik-casual", name: "Batik Casual", categoryId: "ready-to-wear" },
 ];
 
 const allSizes = ["S", "M", "L", "XL", "XXL", "Custom"];

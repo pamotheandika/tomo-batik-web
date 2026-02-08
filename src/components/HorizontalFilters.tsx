@@ -27,6 +27,7 @@ interface HorizontalFiltersProps {
   };
   setFilters: (filters: any) => void;
   onReset?: () => void;
+  hideCategory?: boolean; // Hide category filter (useful for brand pages)
 }
 
 // Category structure
@@ -62,7 +63,7 @@ const colorOptions = [
 
 const sizes = ["S", "M", "L", "XL", "XXL", "Custom"];
 
-const HorizontalFilters = ({ filters, setFilters, onReset }: HorizontalFiltersProps) => {
+const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false }: HorizontalFiltersProps) => {
   const [openPopovers, setOpenPopovers] = useState<Record<string, boolean>>({});
 
   const togglePopover = (key: string) => {
@@ -93,23 +94,29 @@ const HorizontalFilters = ({ filters, setFilters, onReset }: HorizontalFiltersPr
     const parentSubcategoryIds = parentCategory?.subcategories.map(s => s.id) || [];
     
     let newSubcategories: string[];
-    let newCategories = [...filters.category];
+    let newCategories = hideCategory ? [...filters.category] : [...filters.category]; // Don't change category if hideCategory is true
 
     if (checked) {
       newSubcategories = [...filters.subcategory, subcategoryId];
-      const allSubcategoriesSelected = parentSubcategoryIds.every((subId) =>
-        newSubcategories.includes(subId)
-      );
-      if (allSubcategoriesSelected && !newCategories.includes(parentCategoryId)) {
-        newCategories.push(parentCategoryId);
+      // Only auto-select category if hideCategory is false
+      if (!hideCategory) {
+        const allSubcategoriesSelected = parentSubcategoryIds.every((subId) =>
+          newSubcategories.includes(subId)
+        );
+        if (allSubcategoriesSelected && !newCategories.includes(parentCategoryId)) {
+          newCategories.push(parentCategoryId);
+        }
       }
     } else {
       newSubcategories = filters.subcategory.filter((s) => s !== subcategoryId);
-      const anySubcategorySelected = parentSubcategoryIds.some((subId) =>
-        newSubcategories.includes(subId)
-      );
-      if (!anySubcategorySelected) {
-        newCategories = newCategories.filter((c) => c !== parentCategoryId);
+      // Only auto-remove category if hideCategory is false
+      if (!hideCategory) {
+        const anySubcategorySelected = parentSubcategoryIds.some((subId) =>
+          newSubcategories.includes(subId)
+        );
+        if (!anySubcategorySelected) {
+          newCategories = newCategories.filter((c) => c !== parentCategoryId);
+        }
       }
     }
 
@@ -197,6 +204,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset }: HorizontalFiltersPr
   };
 
   // Get all subcategories for display
+  // Show all subcategories from all categories (katun, sutra, batik-tulis-sutra, batik-casual)
   const allSubcategories = categoryStructure.flatMap(cat => 
     cat.subcategories.map(sub => ({
       ...sub,
@@ -210,7 +218,8 @@ const HorizontalFilters = ({ filters, setFilters, onReset }: HorizontalFiltersPr
       {/* Horizontal Filter Bar - Scrollable on mobile */}
       <div className="flex items-center gap-3 pb-4 overflow-x-auto scrollbar-hide">
         <div className="flex items-center gap-3 min-w-max">
-        {/* Category Filter */}
+        {/* Category Filter - Hidden when hideCategory is true */}
+        {!hideCategory && (
         <Popover open={openPopovers.category} onOpenChange={(open) => setOpenPopovers(prev => ({ ...prev, category: open }))}>
           <PopoverTrigger asChild>
             <Button
@@ -313,6 +322,90 @@ const HorizontalFilters = ({ filters, setFilters, onReset }: HorizontalFiltersPr
             </Command>
           </PopoverContent>
         </Popover>
+        )}
+
+        {/* Subcategory Filter - Shown when category is hidden (brand pages) */}
+        {hideCategory && allSubcategories.length > 0 && (
+          <Popover open={openPopovers.subcategory} onOpenChange={(open) => setOpenPopovers(prev => ({ ...prev, subcategory: open }))}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-10 px-4 gap-2.5 rounded-full border-0 backdrop-blur-sm transition-all duration-300 flex-shrink-0 shadow-sm hover:shadow-md",
+                  filters.subcategory.length > 0
+                    ? "bg-foreground text-background hover:bg-foreground/90 shadow-md"
+                    : "bg-background/80 text-muted-foreground hover:text-foreground hover:bg-background/90"
+                )}
+              >
+                <Tag className={cn(
+                  "h-3.5 w-3.5 transition-colors",
+                  filters.subcategory.length > 0 && "text-background"
+                )} />
+                <span className="text-sm font-medium">Subcategory</span>
+                {filters.subcategory.length > 0 && (
+                  <Badge variant="secondary" className="ml-0.5 h-5 px-2 text-xs rounded-full bg-background/20 text-background border-0">
+                    {filters.subcategory.length}
+                  </Badge>
+                )}
+                <ChevronDown className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-300",
+                  openPopovers.subcategory && "rotate-180"
+                )} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-0 rounded-xl border border-border/40 shadow-xl backdrop-blur-xl bg-background/98" align="start">
+              <Command className="rounded-xl">
+                <CommandList className="max-h-[280px] p-2">
+                  <CommandGroup>
+                    {allSubcategories.map(({ id: subcategoryId, name: subcategoryName, parentId, parentName }) => {
+                      const isSelected = filters.subcategory.includes(subcategoryId);
+                      return (
+                        <CommandItem
+                          key={subcategoryId}
+                          onSelect={() => {
+                            handleSubcategoryChange(subcategoryId, parentId, !isSelected);
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-2.5 py-1.5 cursor-pointer rounded-lg transition-all duration-200",
+                            "hover:bg-muted/60 active:scale-[0.98]",
+                            isSelected && "bg-muted/40"
+                          )}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            className="h-4 w-4 transition-all duration-200"
+                          />
+                          <span className={cn(
+                            "text-xs font-medium transition-colors duration-200",
+                            isSelected ? "text-foreground font-semibold" : "text-muted-foreground"
+                          )}>{subcategoryName}</span>
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                </CommandList>
+                {filters.subcategory.length > 0 && (
+                  <div className="border-t border-border/40 p-2 bg-muted/10 rounded-b-xl">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setFilters({
+                          ...filters,
+                          subcategory: [],
+                        });
+                      }}
+                      className="w-full h-8 text-xs rounded-lg hover:bg-muted/60 transition-all duration-200 active:scale-[0.98]"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Clear
+                    </Button>
+                  </div>
+                )}
+              </Command>
+            </PopoverContent>
+          </Popover>
+        )}
 
         {/* Color Filter */}
         <Popover open={openPopovers.color} onOpenChange={(open) => setOpenPopovers(prev => ({ ...prev, color: open }))}>

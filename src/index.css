@@ -87,6 +87,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Merriweather', serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
