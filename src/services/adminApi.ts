@@ -38,8 +38,8 @@ export interface AdminProductPayload {
   price: number;
   discount_price?: number | null;
   image_url: string;
-  category_id: string;
-  subcategory_id?: string;
+  category_id: number;
+  subcategory_id?: number;
   motif?: string;
   colors?: string[];
   is_single_size: boolean;
@@ -145,6 +145,7 @@ export interface AdminProductListItem {
   name: string;
   image_url: string;
   category_name: string;
+  subcategory_name: string;
   price: number;
   discount_price: number | null;
   stock_quantity: number;
@@ -153,21 +154,55 @@ export interface AdminProductListItem {
   is_featured: boolean;
 }
 
+// Category and Subcategory types
+export interface Subcategory {
+  id: number;
+  name: string;
+  parentId: number;
+  description?: string;
+  display_order?: number;
+  is_active?: boolean;
+}
+
+export interface SubcategoryPayload {
+  name: string;
+  category_id: number;
+  description?: string;
+  display_order?: number;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+  subcategories: Subcategory[];
+}
+
+export interface CategoriesResponse {
+  data: Category[];
+}
+
 // Admin Product API
 export const adminProductApi = {
   /**
    * Get all products (admin view) - full data
    */
   async getProducts(): Promise<AdminProductResponse[]> {
-    const response = await adminFetch<ApiResponse<AdminProductResponse[]>>('/admin/products');
-    return response.products || response.data || [];
+    const response = await adminFetch<{ success: boolean; products?: AdminProductResponse[]; data?: AdminProductResponse[] }>('/v1/admin/products');
+    if (response.products && Array.isArray(response.products)) {
+      return response.products;
+    }
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    }
+    return [];
   },
 
   /**
    * Get products list (minimal data for table view)
    */
   async getProductsList(): Promise<{ products: AdminProductListItem[]; total: number }> {
-    const response = await adminFetch<{ success: boolean; products: AdminProductListItem[]; total: number }>('/admin/products/list');
+    const response = await adminFetch<{ success: boolean; products: AdminProductListItem[]; total: number }>('/v1/admin/products/list');
     return {
       products: response.products || [],
       total: response.total || 0,
@@ -178,7 +213,7 @@ export const adminProductApi = {
    * Get single product by ID
    */
   async getProduct(id: number): Promise<AdminProductResponse> {
-    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/admin/products/${id}`);
+    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/v1/admin/products/${id}`);
     return response.product || response.data!;
   },
 
@@ -186,7 +221,7 @@ export const adminProductApi = {
    * Create a new product
    */
   async createProduct(product: AdminProductPayload): Promise<AdminProductResponse> {
-    const response = await adminFetch<ApiResponse<AdminProductResponse>>('/admin/products', {
+    const response = await adminFetch<ApiResponse<AdminProductResponse>>('/v1/admin/products', {
       method: 'POST',
       body: JSON.stringify(product),
     });
@@ -197,7 +232,7 @@ export const adminProductApi = {
    * Update an existing product
    */
   async updateProduct(id: number, product: Partial<AdminProductPayload>): Promise<AdminProductResponse> {
-    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/admin/products/${id}`, {
+    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/v1/admin/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(product),
     });
@@ -216,7 +251,7 @@ export const adminProductApi = {
       payload.sizes = sizes;
     }
 
-    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/admin/products/${id}`, {
+    const response = await adminFetch<ApiResponse<AdminProductResponse>>(`/v1/admin/products/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(payload),
     });
@@ -227,7 +262,70 @@ export const adminProductApi = {
    * Delete a product
    */
   async deleteProduct(id: number): Promise<void> {
-    await adminFetch<ApiResponse<void>>(`/admin/products/${id}`, {
+    await adminFetch<ApiResponse<void>>(`/v1/admin/products/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  /**
+   * Get all categories with subcategories
+   */
+  async getCategories(): Promise<Category[]> {
+    const response = await adminFetch<CategoriesResponse>('/v1/categories');
+    return response.data || [];
+  },
+
+  /**
+   * Get all subcategories
+   */
+  async getSubcategories(): Promise<Subcategory[]> {
+    const response = await adminFetch<{ data: Subcategory[] }>('/v1/admin/subcategories');
+    return response.data || [];
+  },
+
+  /**
+   * Get subcategories by category ID
+   */
+  async getSubcategoriesByCategory(categoryId: number): Promise<Subcategory[]> {
+    const response = await adminFetch<{ data: Subcategory[] }>(`/v1/admin/subcategories?category_id=${categoryId}`);
+    return response.data || [];
+  },
+
+  /**
+   * Get single subcategory by ID
+   */
+  async getSubcategory(id: number): Promise<Subcategory> {
+    const response = await adminFetch<{ data: Subcategory }>(`/v1/admin/subcategories/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Create a new subcategory
+   */
+  async createSubcategory(subcategory: SubcategoryPayload): Promise<Subcategory> {
+    const response = await adminFetch<{ data: Subcategory }>('/v1/admin/subcategories', {
+      method: 'POST',
+      body: JSON.stringify(subcategory),
+    });
+    return response.data;
+  },
+
+  /**
+   * Update an existing subcategory
+   */
+  async updateSubcategory(id: number, subcategory: Partial<SubcategoryPayload>): Promise<Subcategory> {
+    const response = await adminFetch<{ data: Subcategory }>(`/v1/admin/subcategories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(subcategory),
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete a subcategory
+   */
+  async deleteSubcategory(id: number): Promise<void> {
+    await adminFetch<{ message: string }>(`/v1/admin/subcategories/${id}`, {
       method: 'DELETE',
     });
   },
