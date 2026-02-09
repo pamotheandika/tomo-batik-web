@@ -74,7 +74,7 @@ const AdminLogin = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@tomobatik.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-11 h-12 bg-slate-900/50 border-slate-600/50 text-white placeholder:text-slate-500 focus:border-amber-500/50 focus:ring-amber-500/20 rounded-xl"
@@ -123,21 +123,6 @@ const AdminLogin = () => {
               )}
             </Button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 pt-6 border-t border-slate-700/50">
-            <p className="text-xs text-slate-500 text-center mb-3">Demo Credentials</p>
-            <div className="bg-slate-900/50 rounded-lg p-3 text-xs font-mono">
-              <div className="flex justify-between text-slate-400">
-                <span>Email:</span>
-                <span className="text-amber-400">admin@tomobatik.com</span>
-              </div>
-              <div className="flex justify-between text-slate-400 mt-1">
-                <span>Password:</span>
-                <span className="text-amber-400">admin123</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Back to Store Link */}
