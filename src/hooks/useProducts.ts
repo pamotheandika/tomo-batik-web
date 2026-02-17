@@ -6,6 +6,7 @@ import type {
   CatalogApiResponse,
 } from '@/types/product';
 import { transformApiProduct } from '@/types/product';
+import { categorySlugsToIds, subcategorySlugsToIds } from '@/utils/categoryMapping';
 
 // Configuration
 const DEBOUNCE_DELAY = 300;
@@ -50,14 +51,20 @@ interface UseProductsReturn {
 function buildQueryString(filters: Partial<FilterState>): string {
   const params = new URLSearchParams();
 
-  // category_id (string slug)
+  // category_id (convert slugs to numeric IDs)
   if (filters.category?.length) {
-    params.append('category_id', filters.category.join(','));
+    const categoryIds = categorySlugsToIds(filters.category);
+    if (categoryIds.length > 0) {
+      params.append('category_id', categoryIds.join(','));
+    }
   }
 
-  // subcategory_id (string slug)
+  // subcategory_id (convert slugs to numeric IDs)
   if (filters.subcategory?.length) {
-    params.append('subcategory_id', filters.subcategory.join(','));
+    const subcategoryIds = subcategorySlugsToIds(filters.subcategory);
+    if (subcategoryIds.length > 0) {
+      params.append('subcategory_id', subcategoryIds.join(','));
+    }
   }
 
   // sizes (comma-separated)
@@ -142,10 +149,29 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsReturn
       // Build query string with page and limit
       const filterParams = filters ? buildQueryString(filters) : '';
       const baseParams = 'page=1&limit=24';
-      const endpoint = `/catalog?${baseParams}${filterParams ? `&${filterParams}` : ''}`;
+      const endpoint = `/v1/catalog?${baseParams}${filterParams ? `&${filterParams}` : ''}`;
+      
+      // Debug: Log filters and endpoint
+      if (filters?.category?.length) {
+        console.log('🔍 Filter Debug:', {
+          categorySlugs: filters.category,
+          categoryIds: categorySlugsToIds(filters.category),
+          endpoint
+        });
+      }
       
       // Make API call
       const response = await api.get<CatalogApiResponse>(endpoint);
+      
+      // Debug: Log response
+      console.log('📦 API Response:', {
+        total: response.total,
+        productsCount: response.products?.length || 0,
+        page: response.page,
+        limit: response.limit,
+        hasFilters: !!response.filters,
+        categoryCount: response.filters?.categories?.length || 0
+      });
       
       // Transform API response to frontend format
       const transformedProducts = response.products.map(transformApiProduct);

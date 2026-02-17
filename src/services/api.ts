@@ -205,7 +205,7 @@ export interface CheckoutResponse {
 }
 
 // Checkout API - uses direct URL (not under /api)
-const CHECKOUT_URL = import.meta.env.VITE_CHECKOUT_URL || 'http://localhost:8181/checkout';
+const CHECKOUT_URL = import.meta.env.VITE_CHECKOUT_URL || 'http://localhost:8181/api/v1/checkout';
 
 export async function placeOrder(data: CheckoutRequest): Promise<CheckoutResponse> {
   try {
@@ -308,11 +308,11 @@ export interface TrackOrderRequest {
 }
 
 // Get order by order code and guest token (for URL-based access)
-const ORDER_API_URL = import.meta.env.VITE_ORDER_API_URL || 'http://localhost:8181';
+const ORDER_API_URL = import.meta.env.VITE_ORDER_API_URL || 'http://localhost:8181/api/v1';
 
 export async function getOrderByToken(orderCode: string, token: string): Promise<OrderLookupResponse> {
   try {
-    const response = await fetchWithTimeout(`${ORDER_API_URL}/order/${orderCode}?token=${token}`, {
+    const response = await fetchWithTimeout(`${ORDER_API_URL}/orders/${orderCode}?token=${token}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -348,7 +348,7 @@ export async function getOrderByToken(orderCode: string, token: string): Promise
 // Track order by order code and email (for guest verification)
 export async function trackOrderByEmail(orderCode: string, email: string): Promise<OrderLookupResponse> {
   try {
-    const response = await fetchWithTimeout(`${ORDER_API_URL}/order/track`, {
+    const response = await fetchWithTimeout(`${ORDER_API_URL}/orders/track`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ export async function trackOrderByEmail(orderCode: string, email: string): Promi
 // Confirm payment for an order
 export async function confirmOrderPayment(orderCode: string, token: string): Promise<{ success: boolean; message: string }> {
   try {
-    const response = await fetchWithTimeout(`${ORDER_API_URL}/order/${orderCode}/confirm-payment`, {
+    const response = await fetchWithTimeout(`${ORDER_API_URL}/orders/${orderCode}/confirm-payment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

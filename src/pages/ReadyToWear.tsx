@@ -21,7 +21,7 @@ const ReadyToWear = () => {
     subcategory: [] as string[],
     size: [] as string[],
     color: [] as string[],
-    priceRange: [0, 3000000] as [number, number],
+    priceRange: [0, 5000000] as [number, number],
   });
 
   const [sortBy, setSortBy] = useState<SortOption>("newest");
@@ -40,7 +40,7 @@ const ReadyToWear = () => {
       subcategory: [],
       size: [],
       color: [],
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     });
   };
 
@@ -110,6 +110,7 @@ const ReadyToWear = () => {
                 setFilters={updateFilters}
                 onReset={clearAllFilters}
                 hideCategory={true}
+                allowedSubcategories={["katun", "sutra"]}
               />
               
               {/* Sort Dropdown */}

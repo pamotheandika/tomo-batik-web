@@ -7,19 +7,26 @@ import type {
   Category 
 } from '@/types/product';
 import { transformApiProduct } from '@/types/product';
+import { categorySlugsToIds, subcategorySlugsToIds } from '@/utils/categoryMapping';
 
 // Build query string from filters - matching backend API
 function buildQueryString(filters: Partial<FilterState>): string {
   const params = new URLSearchParams();
 
-  // category_id (string slug)
+  // category_id (convert slugs to numeric IDs)
   if (filters.category?.length) {
-    params.append('category_id', filters.category.join(','));
+    const categoryIds = categorySlugsToIds(filters.category);
+    if (categoryIds.length > 0) {
+      params.append('category_id', categoryIds.join(','));
+    }
   }
 
-  // subcategory_id (string slug)
+  // subcategory_id (convert slugs to numeric IDs)
   if (filters.subcategory?.length) {
-    params.append('subcategory_id', filters.subcategory.join(','));
+    const subcategoryIds = subcategorySlugsToIds(filters.subcategory);
+    if (subcategoryIds.length > 0) {
+      params.append('subcategory_id', subcategoryIds.join(','));
+    }
   }
 
   // sizes (comma-separated)
@@ -95,7 +102,7 @@ export const productService = {
       }
     }
     
-    const endpoint = `/catalog?${params.toString()}`;
+    const endpoint = `/v1/catalog?${params.toString()}`;
     const response = await api.get<CatalogApiResponse>(endpoint);
     
     // Transform API response
@@ -107,13 +114,13 @@ export const productService = {
       totalPages: Math.ceil(response.total / response.limit),
       filters: {
         categories: response.filters.categories.map(c => ({
-          id: c.id,
+          id: String(c.id), // Convert to string for frontend
           name: c.name,
           productCount: c.product_count,
         })),
         subcategories: response.filters.subcategories.map(s => ({
-          id: s.id,
-          categoryId: s.category_id,
+          id: String(s.id), // Convert to string for frontend
+          categoryId: String(s.category_id), // Convert to string for frontend
           name: s.name,
           productCount: s.product_count,
         })),
@@ -133,7 +140,7 @@ export const productService = {
     interface ProductApiResponse {
       product: import('@/types/product').ApiProduct;
     }
-    const response = await api.get<ProductApiResponse>(`/products/${id}`);
+    const response = await api.get<ProductApiResponse>(`/v1/products/${id}`);
     return { data: transformApiProduct(response.product) };
   },
 
@@ -162,7 +169,7 @@ export const productService = {
    * Get featured/best seller products
    */
   async getFeaturedProducts(): Promise<{ data: Product[] }> {
-    const response = await api.get<CatalogApiResponse>('/catalog?is_featured=true&limit=8');
+    const response = await api.get<CatalogApiResponse>('/v1/catalog?is_featured=true&limit=8');
     return { data: response.products.map(transformApiProduct) };
   },
 
@@ -170,7 +177,7 @@ export const productService = {
    * Get new arrival products
    */
   async getNewArrivals(): Promise<{ data: Product[] }> {
-    const response = await api.get<CatalogApiResponse>('/catalog?is_new=true&sort_by=newest&limit=8');
+    const response = await api.get<CatalogApiResponse>('/v1/catalog?is_new=true&sort_by=newest&limit=8');
     return { data: response.products.map(transformApiProduct) };
   },
 
@@ -178,7 +185,7 @@ export const productService = {
    * Get best seller products
    */
   async getBestSellers(): Promise<{ data: Product[] }> {
-    const response = await api.get<CatalogApiResponse>('/catalog?is_best_seller=true&limit=8');
+    const response = await api.get<CatalogApiResponse>('/v1/catalog?is_best_seller=true&limit=8');
     return { data: response.products.map(transformApiProduct) };
   },
 
@@ -186,7 +193,7 @@ export const productService = {
    * Get related products
    */
   async getRelatedProducts(productId: number, categoryId: string): Promise<{ data: Product[] }> {
-    const response = await api.get<CatalogApiResponse>(`/catalog?category_id=${categoryId}&limit=4`);
+    const response = await api.get<CatalogApiResponse>(`/v1/catalog?category_id=${categoryId}&limit=4`);
     // Filter out the current product
     const related = response.products
       .filter(p => p.id !== productId)
@@ -200,7 +207,7 @@ export const productService = {
    */
   async getCategories(): Promise<{ data: Category[] }> {
     // Get categories from the catalog filters
-    const response = await api.get<CatalogApiResponse>('/catalog?limit=1');
+    const response = await api.get<CatalogApiResponse>('/v1/catalog?limit=1');
     
     // Build categories from filters
     const categories: Category[] = response.filters.categories.map(cat => ({

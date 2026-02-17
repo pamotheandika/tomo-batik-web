@@ -28,6 +28,7 @@ interface HorizontalFiltersProps {
   setFilters: (filters: any) => void;
   onReset?: () => void;
   hideCategory?: boolean; // Hide category filter (useful for brand pages)
+  allowedSubcategories?: string[]; // Limit which subcategories to show (e.g., ["katun", "sutra"])
 }
 
 // Category structure
@@ -63,7 +64,7 @@ const colorOptions = [
 
 const sizes = ["S", "M", "L", "XL", "XXL", "Custom"];
 
-const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false }: HorizontalFiltersProps) => {
+const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false, allowedSubcategories }: HorizontalFiltersProps) => {
   const [openPopovers, setOpenPopovers] = useState<Record<string, boolean>>({});
 
   const togglePopover = (key: string) => {
@@ -177,7 +178,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
   const clearPrice = () => {
     setFilters({
       ...filters,
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     });
   };
 
@@ -187,7 +188,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
     filters.size.length > 0 ||
     filters.color.length > 0 ||
     filters.priceRange[0] > 0 ||
-    filters.priceRange[1] < 3000000;
+    filters.priceRange[1] < 5000000;
 
   const handleReset = () => {
     const resetFilters = {
@@ -195,7 +196,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
       subcategory: [],
       size: [],
       color: [],
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     };
     setFilters(resetFilters);
     if (onReset) {
@@ -205,12 +206,15 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
 
   // Get all subcategories for display
   // Show all subcategories from all categories (katun, sutra, batik-tulis-sutra, batik-casual)
+  // Filter by allowedSubcategories if provided
   const allSubcategories = categoryStructure.flatMap(cat => 
-    cat.subcategories.map(sub => ({
-      ...sub,
-      parentId: cat.id,
-      parentName: cat.name,
-    }))
+    cat.subcategories
+      .filter(sub => !allowedSubcategories || allowedSubcategories.includes(sub.id))
+      .map(sub => ({
+        ...sub,
+        parentId: cat.id,
+        parentName: cat.name,
+      }))
   );
 
   return (
@@ -252,9 +256,13 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
               <CommandList className="max-h-[280px] p-2">
                 <CommandGroup>
                   {categoryStructure.map(({ id: categoryId, name: categoryName, icon: Icon, subcategories }) => {
+                    // Filter subcategories by allowedSubcategories if provided
+                    const filteredSubcategories = allowedSubcategories 
+                      ? subcategories.filter(sub => allowedSubcategories.includes(sub.id))
+                      : subcategories;
                     const isCategorySelected = filters.category.includes(categoryId);
-                    const selectedSubs = subcategories.filter(sub => filters.subcategory.includes(sub.id));
-                    const isPartiallySelected = selectedSubs.length > 0 && selectedSubs.length < subcategories.length;
+                    const selectedSubs = filteredSubcategories.filter(sub => filters.subcategory.includes(sub.id));
+                    const isPartiallySelected = selectedSubs.length > 0 && selectedSubs.length < filteredSubcategories.length;
                     
                     return (
                       <div key={categoryId} className="space-y-1 mb-1.5">
@@ -280,7 +288,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
                           <span className="flex-1 font-medium text-xs">{categoryName}</span>
                         </CommandItem>
                         <div className="ml-8 space-y-0.5 pl-2 border-l-2 border-muted/40">
-                          {subcategories.map(({ id: subcategoryId, name: subcategoryName }) => {
+                          {filteredSubcategories.map(({ id: subcategoryId, name: subcategoryName }) => {
                             const isSubSelected = filters.subcategory.includes(subcategoryId);
                             return (
                               <CommandItem
@@ -573,17 +581,17 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
               variant="outline"
               className={cn(
                 "h-10 px-4 gap-2.5 rounded-full border-0 backdrop-blur-sm transition-all duration-300 flex-shrink-0 shadow-sm hover:shadow-md",
-                filters.priceRange[0] > 0 || filters.priceRange[1] < 3000000
+                filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000
                   ? "bg-foreground text-background hover:bg-foreground/90 shadow-md"
                   : "bg-background/80 text-muted-foreground hover:text-foreground hover:bg-background/90"
               )}
             >
               <span className={cn(
                 "text-xs font-semibold transition-colors",
-                (filters.priceRange[0] > 0 || filters.priceRange[1] < 3000000) && "text-background"
+                (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000) && "text-background"
               )}>Rp</span>
               <span className="text-sm font-medium">Price</span>
-              {(filters.priceRange[0] > 0 || filters.priceRange[1] < 3000000) && (
+              {(filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000) && (
                 <Badge variant="secondary" className="ml-0.5 h-5 px-2 text-xs rounded-full bg-background/20 text-background border-0">
                   Active
                 </Badge>
@@ -609,7 +617,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
               <div className="px-1">
                 <Slider
                   min={0}
-                  max={3000000}
+                  max={5000000}
                   step={100000}
                   value={filters.priceRange}
                   onValueChange={handlePriceChange}
@@ -622,7 +630,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
                   { label: "Under 500K", range: [0, 500000] },
                   { label: "500K - 1M", range: [500000, 1000000] },
                   { label: "1M - 2M", range: [1000000, 2000000] },
-                  { label: "Over 2M", range: [2000000, 3000000] },
+                  { label: "Over 2M", range: [2000000, 5000000] },
                 ].map(({ label, range }) => {
                   const isActive = filters.priceRange[0] === range[0] && filters.priceRange[1] === range[1];
                   return (
@@ -645,7 +653,7 @@ const HorizontalFilters = ({ filters, setFilters, onReset, hideCategory = false 
                 })}
               </div>
               
-              {(filters.priceRange[0] > 0 || filters.priceRange[1] < 3000000) && (
+              {(filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000) && (
                 <Button
                   variant="ghost"
                   size="sm"

@@ -9,6 +9,7 @@ import SortDropdown, { type SortOption } from "@/components/SortDropdown";
 import { Button } from "@/components/ui/button";
 import { Grid3X3, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { categoryIdToSlug, subcategoryIdToSlug } from "@/utils/categoryMapping";
 
 const Catalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,14 +23,40 @@ const Catalog = () => {
     const minPrice = searchParams.get("min_price");
     const maxPrice = searchParams.get("max_price");
 
+    // Convert numeric IDs from URL to slugs for internal use
+    // If it's a number, convert to slug; if it's already a slug, keep it
+    const parseCategoryIds = (ids: string): string[] => {
+      return ids.split(",").map(id => {
+        const numId = parseInt(id, 10);
+        if (!isNaN(numId)) {
+          // It's a numeric ID, convert to slug
+          const slug = categoryIdToSlug(numId);
+          return slug || id; // Fallback to original if mapping not found
+        }
+        return id; // Already a slug
+      });
+    };
+
+    const parseSubcategoryIds = (ids: string): string[] => {
+      return ids.split(",").map(id => {
+        const numId = parseInt(id, 10);
+        if (!isNaN(numId)) {
+          // It's a numeric ID, convert to slug
+          const slug = subcategoryIdToSlug(numId);
+          return slug || id; // Fallback to original if mapping not found
+        }
+        return id; // Already a slug
+      });
+    };
+
     return {
-      category: categoryId ? categoryId.split(",") : [],
-      subcategory: subcategoryId ? subcategoryId.split(",") : [],
+      category: categoryId ? parseCategoryIds(categoryId) : [],
+      subcategory: subcategoryId ? parseSubcategoryIds(subcategoryId) : [],
       size: sizes ? sizes.split(",") : [],
       color: colors ? colors.split(",") : [],
       priceRange: [
         minPrice ? parseInt(minPrice) : 0,
-        maxPrice ? parseInt(maxPrice) : 3000000,
+        maxPrice ? parseInt(maxPrice) : 5000000,
       ] as [number, number],
     };
   };
@@ -65,7 +92,7 @@ const Catalog = () => {
     if (newFilters.priceRange[0] > 0) {
       params.set("min_price", newFilters.priceRange[0].toString());
     }
-    if (newFilters.priceRange[1] < 3000000) {
+    if (newFilters.priceRange[1] < 5000000) {
       params.set("max_price", newFilters.priceRange[1].toString());
     }
     
@@ -78,7 +105,7 @@ const Catalog = () => {
       subcategory: [],
       size: [],
       color: [],
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     });
     setSearchParams({}, { replace: true });
   };
@@ -88,7 +115,7 @@ const Catalog = () => {
     filters.subcategory.length + 
     filters.size.length + 
     filters.color.length +
-    (filters.priceRange[0] > 0 || filters.priceRange[1] < 3000000 ? 1 : 0);
+    (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000 ? 1 : 0);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background via-background to-secondary/20">

@@ -15,10 +15,10 @@ export interface ApiProduct {
   is_best_seller: boolean;
   is_featured: boolean;
   stock_quantity: number;
-  category_id: string;
+  category_id: number | string; // API can return numeric IDs
   category_name: string;
-  subcategory_id: string;
-  subcategory_name: string;
+  subcategory_id: number | string | null; // API can return numeric IDs or null
+  subcategory_name: string | null;
   available_sizes: string[];
   all_sizes: string[];
   created_at: string;
@@ -58,13 +58,13 @@ export interface CatalogApiResponse {
   limit: number;
   filters: {
     categories: Array<{
-      id: string;
+      id: number | string; // API returns numeric IDs
       name: string;
       product_count: number;
     }>;
     subcategories: Array<{
-      id: string;
-      category_id: string;
+      id: number | string; // API returns numeric IDs
+      category_id: number | string; // API returns numeric IDs
       name: string;
       product_count: number;
     }>;
@@ -215,9 +215,9 @@ export function transformApiProduct(apiProduct: ApiProduct): Product {
     isFeatured: apiProduct.is_featured,
     stock: apiProduct.stock_quantity,
     category: apiProduct.category_name,
-    categoryId: apiProduct.category_id,
-    subcategory: apiProduct.subcategory_name,
-    subcategoryId: apiProduct.subcategory_id,
+    categoryId: String(apiProduct.category_id), // Convert to string for frontend
+    subcategory: apiProduct.subcategory_name || '',
+    subcategoryId: apiProduct.subcategory_id ? String(apiProduct.subcategory_id) : '',
     sizes: apiProduct.available_sizes,
     allSizes: apiProduct.all_sizes,
     createdAt: apiProduct.created_at,
@@ -235,13 +235,13 @@ export function transformCatalogResponse(apiResponse: CatalogApiResponse): Produ
     totalPages: Math.ceil(apiResponse.total / apiResponse.limit),
     filters: {
       categories: apiResponse.filters.categories.map(c => ({
-        id: c.id,
+        id: String(c.id), // Convert to string for frontend
         name: c.name,
         productCount: c.product_count,
       })),
       subcategories: apiResponse.filters.subcategories.map(s => ({
-        id: s.id,
-        categoryId: s.category_id,
+        id: String(s.id), // Convert to string for frontend
+        categoryId: String(s.category_id), // Convert to string for frontend
         name: s.name,
         productCount: s.product_count,
       })),

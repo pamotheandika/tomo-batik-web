@@ -175,7 +175,7 @@ const ProductFilters = ({ filters, setFilters, onReset }: ProductFiltersProps) =
     filters.size.length > 0 ||
     filters.color.length > 0 ||
     filters.priceRange[0] > 0 ||
-    filters.priceRange[1] < 3000000;
+    filters.priceRange[1] < 5000000;
 
   const handleReset = () => {
     const resetFilters = {
@@ -183,7 +183,7 @@ const ProductFilters = ({ filters, setFilters, onReset }: ProductFiltersProps) =
       subcategory: [],
       size: [],
       color: [],
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     };
     setFilters(resetFilters);
     if (onReset) {
@@ -492,7 +492,7 @@ const ProductFilters = ({ filters, setFilters, onReset }: ProductFiltersProps) =
           <div className="pt-2 px-1">
             <Slider
               min={0}
-              max={3000000}
+              max={5000000}
               step={100000}
               value={filters.priceRange}
               onValueChange={handlePriceChange}
@@ -506,7 +506,7 @@ const ProductFilters = ({ filters, setFilters, onReset }: ProductFiltersProps) =
               { label: "Under 500K", range: [0, 500000] },
               { label: "500K - 1M", range: [500000, 1000000] },
               { label: "1M - 2M", range: [1000000, 2000000] },
-              { label: "Over 2M", range: [2000000, 3000000] },
+              { label: "Over 2M", range: [2000000, 5000000] },
             ].map(({ label, range }) => {
               const isActive = filters.priceRange[0] === range[0] && filters.priceRange[1] === range[1];
               return (

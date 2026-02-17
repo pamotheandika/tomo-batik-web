@@ -21,7 +21,7 @@ const BatikTulis = () => {
     subcategory: [] as string[],
     size: [] as string[],
     color: [] as string[],
-    priceRange: [0, 3000000] as [number, number],
+    priceRange: [0, 5000000] as [number, number],
   });
 
   const [sortBy, setSortBy] = useState<SortOption>("newest");
@@ -40,7 +40,7 @@ const BatikTulis = () => {
       subcategory: [],
       size: [],
       color: [],
-      priceRange: [0, 3000000],
+      priceRange: [0, 5000000],
     });
   };
 
@@ -78,27 +78,36 @@ const BatikTulis = () => {
       <PromoBar />
       <Header />
       <main>
-        {/* Best Seller Products Section - Only Batik Tulis */}
-        <ProductSection
-          title="Best Seller Products"
-          badge="Popular"
-          filters={bestSellerFilters}
-          limit={8}
-          showViewAll={true}
-          viewAllLink={`/catalog?category_id=${brandCategory}&is_best_seller=true`}
-          className="bg-background"
-        />
+        {/* Best Seller and Newest Products - Side by Side Layout */}
+        <section className="py-12 md:py-16 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              {/* Best Seller Products Section - Left Side */}
+              <ProductSection
+                title="Best Seller Products"
+                badge="Popular"
+                filters={bestSellerFilters}
+                limit={4}
+                showViewAll={true}
+                viewAllLink={`/catalog?category_id=${brandCategory}&is_best_seller=true`}
+                className=""
+                noSectionWrapper={true}
+              />
 
-        {/* Newest Products Section - Only Batik Tulis */}
-        <ProductSection
-          title="Newest Products"
-          badge="Latest"
-          filters={newestFilters}
-          limit={8}
-          showViewAll={true}
-          viewAllLink={`/catalog?category_id=${brandCategory}&is_new=true&sort_by=newest`}
-          className="bg-gradient-to-b from-background to-secondary/20"
-        />
+              {/* Newest Products Section - Right Side */}
+              <ProductSection
+                title="Newest Products"
+                badge="Latest"
+                filters={newestFilters}
+                limit={4}
+                showViewAll={true}
+                viewAllLink={`/catalog?category_id=${brandCategory}&is_new=true&sort_by=newest`}
+                className=""
+                noSectionWrapper={true}
+              />
+            </div>
+          </div>
+        </section>
 
         {/* Filters Section */}
         <section className="bg-background border-t border-b">
@@ -110,6 +119,7 @@ const BatikTulis = () => {
                 setFilters={updateFilters}
                 onReset={clearAllFilters}
                 hideCategory={true}
+                allowedSubcategories={["katun", "sutra"]}
               />
               
               {/* Sort Dropdown */}
